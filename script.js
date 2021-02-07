@@ -1,26 +1,12 @@
 document.getElementById('search-btn').addEventListener('click', function () {
     const getInputValue = document.getElementById('search-data').value;
-    //console.log(getInputValue);
     fetchAllSearchMeal(getInputValue);
 
     const blankItem = document.getElementById('search-data').value = "";
 
 })
 
-//Display No Results Found
-const displayErrorMsg = () => {
-    let displayMsg = document.getElementById('meal-detail');
-    displayMsg.innerHTML = " ";
-    const noResultsDiv = document.createElement('div');
-    noResultsDiv.className = "noResultsDiv"
-    noResultsDiv.innerHTML = `
-    <h3>No Results Found.</h3>
-    <p>Please Try Again.</p>
-    `
-    displayMsg.appendChild(noResultsDiv);
-}
-
-//Fetch all meals from API  
+//Fetch all searched meals from API  
 const fetchAllSearchMeal = name => {
     const url = `https://www.themealdb.com/api/json/v1/1/search.php?s=${name}`
     fetch(url)
@@ -35,6 +21,19 @@ const fetchAllSearchMeal = name => {
                 getMealMenus(data.meals);
             }
         });
+}
+
+//Display No Results Found
+const displayErrorMsg = () => {
+    let displayMsg = document.getElementById('meal-detail');
+    displayMsg.innerHTML = " ";
+    const noResultsDiv = document.createElement('div');
+    noResultsDiv.className = "noResultsDiv"
+    noResultsDiv.innerHTML = `
+    <h3>No Results Found.</h3>
+    <p>Please Try Again.</p>
+    `
+    displayMsg.appendChild(noResultsDiv);
 }
 
 //get Searched menu
@@ -55,7 +54,7 @@ const getMealMenus = allMenus => {
             displayMenuDetail(searchMenu.strMeal);
         })
     });
-    
+
     //Get one unique meal details
     const displayMenuDetail = name => {
         const url = `https://www.themealdb.com/api/json/v1/1/search.php?s=${name}`
