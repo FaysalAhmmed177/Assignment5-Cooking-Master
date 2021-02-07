@@ -1,33 +1,53 @@
 document.getElementById('search-btn').addEventListener('click', function () {
     const getInputValue = document.getElementById('search-data').value;
-    console.log(getInputValue);
+    //console.log(getInputValue);
     fetchAllSearchMeal(getInputValue);
+
+    const blankItem = document.getElementById('search-data').value = "";
+
 })
 
+//Display No Results Found
+const displayErrorMsg = () => {
+    let displayMsg = document.getElementById('meal-detail');
+    displayMsg.innerHTML = " ";
+    const noResultsDiv = document.createElement('div');
+    noResultsDiv.className = "noResultsDiv"
+    noResultsDiv.innerHTML = `
+    <h3>No Results Found.</h3>
+    <p>Please Try Again.</p>
+    `
+    displayMsg.appendChild(noResultsDiv);
+}
+
+//Fetch all meals from API  
 const fetchAllSearchMeal = name => {
     const url = `https://www.themealdb.com/api/json/v1/1/search.php?s=${name}`
     fetch(url)
         .then(res => res.json())
         .then(data => {
-            //console.log(data);
-            getMealMenus(data.meals);
+
+            //Input Validation here
+            if (name === "" || data.meals === null) {
+                displayErrorMsg();
+            }
+            else {
+                getMealMenus(data.meals);
+            }
         });
 }
 
+//get Searched menu
 const getMealMenus = allMenus => {
-    // console.log(allMenus) 
-    const mealsDiv = document.getElementById('meal-detail');
-
+    let mealsDiv = document.getElementById('meal-detail');
+    mealsDiv.innerHTML = " ";
     allMenus.forEach(searchMenu => {
-        //console.log(searchMenu.strMeal)
-
         const menuDiv = document.createElement('div');
         menuDiv.className = 'menus';
         const mealInfo = `
       <img src="${searchMenu.strMealThumb}"> 
       <h3>${searchMenu.strMeal}
       `
-        menuDiv.innerHTML = ""
         menuDiv.innerHTML = mealInfo;
         mealsDiv.appendChild(menuDiv)
 
@@ -35,6 +55,8 @@ const getMealMenus = allMenus => {
             displayMenuDetail(searchMenu.strMeal);
         })
     });
+    
+    //Get one unique meal details
     const displayMenuDetail = name => {
         const url = `https://www.themealdb.com/api/json/v1/1/search.php?s=${name}`
         fetch(url)
@@ -42,9 +64,8 @@ const getMealMenus = allMenus => {
             .then(data => renderMealInfo(data.meals[0]));
     }
 
+    //Display Meal Ingredients 
     const renderMealInfo = Meal => {
-
-        console.log(Meal);
         const MenuDiv = document.getElementById('meal-ingredients');
         MenuDiv.innerHTML = `
           <img src="${Meal.strMealThumb}">
@@ -62,8 +83,4 @@ const getMealMenus = allMenus => {
           <li>${Meal.strIngredient9}</li>  
         `
     }
-    // for (let i = 0; i < allMenus.length; i++) {
-    //     const meal = allMenus[i];
-    //     console.log(meal.strMeal);
-    // }
 }
